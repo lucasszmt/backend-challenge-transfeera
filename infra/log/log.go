@@ -1,4 +1,4 @@
-package main
+package log
 
 import (
 	"github.com/rs/zerolog"
@@ -10,7 +10,7 @@ type Logger interface {
 	Info(msg string)
 	Error(msg string, err error)
 	Warn(msg string)
-	Fatal(msg string)
+	Fatal(msg string, err error)
 }
 
 func PrettyLogger() logger {
@@ -29,19 +29,19 @@ type logger struct {
 	logger zerolog.Logger
 }
 
-func (l logger) Info(msg string) {
+func (l *logger) Info(msg string) {
 	l.logger.Info().Msg("asdasd")
 }
 
-func (l logger) Error(msg string, err error) {
+func (l *logger) Error(msg string, err error) {
 	l.logger.Error().Stack().Err(err).Msgf(msg)
 }
 
-func (l logger) Warn(msg string) {
+func (l *logger) Warn(msg string) {
 	l.logger.Warn().Msg(msg)
 }
 
-func (l logger) Fatal(msg string, err error) {
+func (l *logger) Fatal(msg string, err error) {
 	l.logger.Fatal().
 		Err(err).
 		Msg(msg)

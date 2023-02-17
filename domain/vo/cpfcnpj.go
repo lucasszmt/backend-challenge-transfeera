@@ -23,6 +23,7 @@ type CpfCnpj struct {
 	docType DocType
 }
 
+// TODO arrumar, está aceitando criar uma chave CNPJ on de é passado um cpf
 func NewCpfCnpj(doc string) (*CpfCnpj, error) {
 	//TODO improve CPF/CNPJ validation with sum of digits
 	cpfcpnj := new(CpfCnpj)

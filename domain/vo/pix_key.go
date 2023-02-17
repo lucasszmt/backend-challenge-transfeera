@@ -28,6 +28,7 @@ type PixKey struct {
 func NewPixKey(keyType PixKeyType, keyValue string) (*PixKey, error) {
 	key := &PixKey{keyType: keyType}
 	switch keyType {
+	//TODO REVIEW THIS FUCK
 	case CPFKey, CNPJKey:
 		doc, err := NewCpfCnpj(keyValue)
 		if err != nil {
@@ -52,8 +53,21 @@ func NewPixKey(keyType PixKeyType, keyValue string) (*PixKey, error) {
 		key.value = keyValue
 	default:
 		return nil, ErrInvalidPixKeyType
+
 	}
 	return key, nil
+}
+
+func (p *PixKey) KeyType() string {
+	return string(p.keyType)
+}
+
+func (p *PixKey) SetKeyType(keyType PixKeyType) {
+	p.keyType = keyType
+}
+
+func (p *PixKey) Value() string {
+	return p.value
 }
 
 func validatePhone(phoneNumber string) error {

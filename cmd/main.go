@@ -1,17 +1,37 @@
 package main
 
 import (
-	"errors"
+	"github.com/joho/godotenv"
+	"github.com/lucasszmt/transfeera-challenge/app"
+	"github.com/lucasszmt/transfeera-challenge/domain/receiver"
+	"github.com/lucasszmt/transfeera-challenge/infra/db"
+	"github.com/lucasszmt/transfeera-challenge/infra/log"
 	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"os"
 )
 
 func main() {
-	//zerolog.SetGlobalLevel(zerolog.DebugLevel)
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	log.Info().AnErr("error", errors.New("error message")).Uint64("teste_key", 12).Msg("tesste")
-	log.Trace().Msg("trace message")
-	log.Debug().Msg("Testing info")
-	log.Error().Stack().Err(errors.New("error message")).Msg("")
+	err := godotenv.Load()
+	if err != nil {
+		panic("Error loading .env file")
+	}
+
+	logger := log.NewLogger(zerolog.DebugLevel)
+
+	// Init DB connection
+	dbConn := db.Must(db.NewPostgresConn(
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_NAME")))
+
+	// Init repositories
+	receiverRepo := db.NewReceiver(dbConn)
+
+	// Init services
+	receiverService := receiver.NewService(&logger, receiverRepo)
+
+	server := app.NewServer(receiverService)
+	server.Run()
 }
