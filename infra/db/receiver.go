@@ -24,7 +24,7 @@ func (r *Receiver) Get(query string) ([]dtos.GetReceiverResponse, error) {
 	var resp []dtos.GetReceiverResponse
 	if err := r.db.Select(&resp, QueryUser, query); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, receiver.ErrRowReceiverNotFound
+			return nil, receiver.ErrReceiverNotFound
 		}
 		return nil, err
 	}
@@ -95,9 +95,9 @@ func (r *Receiver) UpdateValid(id uuid.UUID, email string) error {
 
 func (r *Receiver) GetByID(id uuid.UUID) (*dtos.GetReceiverResponse, error) {
 	resp := dtos.GetReceiverResponse{}
-	if err := r.db.Get(&resp, QueryUserByID, id); err != nil {
+	if err := r.db.Get(&resp, QueryUserByID, id.String()); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, receiver.ErrRowReceiverNotFound
+			return nil, receiver.ErrReceiverNotFound
 		}
 		return nil, err
 	}
@@ -115,7 +115,7 @@ func (r *Receiver) List(page int) ([]dtos.ListReceiversResponse, error) {
 	err = stmt.Select(&resp, limit, offset)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, receiver.ErrRowReceiverNotFound
+			return nil, receiver.ErrReceiverNotFound
 		}
 		return nil, err
 	}
@@ -128,10 +128,10 @@ func (r *Receiver) Delete(id ...uuid.UUID) error {
 		return err
 	}
 	query = r.db.Rebind(query)
-	result, err := r.db.Query(query, args...)
+	res, err := r.db.Exec(query, args...)
 	if err != nil {
 		return err
 	}
-	fmt.Println(result)
+	fmt.Println(res.RowsAffected())
 	return nil
 }

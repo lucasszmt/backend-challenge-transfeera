@@ -12,4 +12,8 @@ const (
 func ReceiverRoutes(route *fiber.App, handler handler.ReceiverHandler) {
 	receiverRoutes := route.Group(receiverV1Route)
 	receiverRoutes.Post("/", handler.Create())
+	receiverRoutes.Patch("/", handler.Update())
+	receiverRoutes.Get("/", handler.List())
+	receiverRoutes.Get("/:id", handler.Get())
+	receiverRoutes.Delete("/", handler.Delete())
 }

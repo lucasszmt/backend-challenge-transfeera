@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/lucasszmt/transfeera-challenge/domain/vo"
+	"strings"
 )
 
 type UserStatus int
@@ -54,7 +55,7 @@ func NewReceiver(name string, emailAddress string, doc string, pixKeyType vo.Pix
 // TODO extracts this lot of constructore attributes to structs
 
 func NewUpdatebleReceiver(id string, name string, emailAddress string, doc string, pixKeyType vo.PixKeyType,
-	pixKey string) (*Receiver, error) {
+	pixKey string, status string) (*Receiver, error) {
 	r := new(Receiver)
 	var err error
 
@@ -81,7 +82,12 @@ func NewUpdatebleReceiver(id string, name string, emailAddress string, doc strin
 	if err != nil {
 		return nil, err
 	}
-	r.status = Draft
+	if strings.ToLower(status) == "draft" {
+		r.status = Draft
+	}
+	if strings.ToLower(status) == "valid" {
+		r.status = Valid
+	}
 	return r, nil
 }
 

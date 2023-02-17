@@ -25,9 +25,10 @@ type Repository interface {
 }
 
 type UseCase interface {
-	CreateReceiver(request dtos.CreateUserRequest) (*entity.Receiver, error)
+	CreateReceiver(request dtos.UpdateReceiverRequest) (*entity.Receiver, error)
 	SearchReceivers(query string) ([]dtos.GetReceiverResponse, error)
-	//TODO implement folowing usecases
-	//ListReceivers() ([]*entity.Receiver, error)
+	UpdateReceiver(req dtos.UpdateReceiverRequest) error
+	ListReceivers(page int) ([]dtos.ListReceiversResponse, error)
+	GetReceiver(id string) (*dtos.GetReceiverResponse, error)
 	//DeleteReceivers()
 }

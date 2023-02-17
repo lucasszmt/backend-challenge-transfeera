@@ -28,7 +28,7 @@ type PixKey struct {
 func NewPixKey(keyType PixKeyType, keyValue string) (*PixKey, error) {
 	key := &PixKey{keyType: keyType}
 	switch keyType {
-	//TODO REVIEW THIS FUCK
+	//TODO REVIEW THIS
 	case CPFKey, CNPJKey:
 		doc, err := NewCpfCnpj(keyValue)
 		if err != nil {
