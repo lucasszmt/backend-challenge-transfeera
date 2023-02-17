@@ -17,7 +17,7 @@ func NewService(log log.Logger, repo Repository) *Service {
 	return &Service{log: log, repo: repo}
 }
 
-func (s *Service) CreateReceiver(r dtos.UpdateReceiverRequest) (*entity.Receiver, error) {
+func (s *Service) CreateReceiver(r dtos.CreateReceiverRequest) (*entity.Receiver, error) {
 	rcv, err := entity.NewReceiver(r.Name, r.Email, r.Doc, r.PixKeyType, r.PixKey)
 	if err != nil {
 		s.log.Error("error creating the a receiver", err)

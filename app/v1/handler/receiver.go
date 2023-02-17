@@ -28,7 +28,7 @@ func NewReceiverHandler(useCase receiver.UseCase) ReceiverHandler {
 
 func (r *receiverHandler) Create() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		req := dtos.UpdateReceiverRequest{}
+		req := dtos.CreateReceiverRequest{}
 		err := c.BodyParser(&req)
 		if err != nil {
 			return c.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -74,7 +74,7 @@ func (r *receiverHandler) Update() fiber.Handler {
 		}
 		err = r.recvService.UpdateReceiver(req)
 		if err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			return c.Status(http.StatusUnprocessableEntity).JSON(fiber.Map{
 				"status": false,
 				"errors": fmt.Sprintf("unable to update the receiver requested: %s", err),
 			})
