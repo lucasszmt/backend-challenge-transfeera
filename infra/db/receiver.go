@@ -20,9 +20,10 @@ func NewReceiver(db *sqlx.DB) *Receiver {
 	return &Receiver{db: db}
 }
 
-func (r *Receiver) Get(query string) ([]dtos.GetReceiverResponse, error) {
+func (r *Receiver) Get(query string, limit int) ([]dtos.GetReceiverResponse, error) {
 	var resp []dtos.GetReceiverResponse
-	if err := r.db.Select(&resp, QueryUser, query); err != nil {
+	query = fmt.Sprint("%", query, "%")
+	if err := r.db.Select(&resp, QueryUser, query, limit); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, receiver.ErrReceiverNotFound
 		}

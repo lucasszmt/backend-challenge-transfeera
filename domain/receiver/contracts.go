@@ -15,7 +15,7 @@ type Writer interface {
 
 type Reader interface {
 	GetByID(id uuid.UUID) (*dtos.GetReceiverResponse, error)
-	Get(query string) ([]dtos.GetReceiverResponse, error)
+	Get(query string, limit int) ([]dtos.GetReceiverResponse, error)
 	List(page int) ([]dtos.ListReceiversResponse, error)
 }
 
@@ -26,9 +26,9 @@ type Repository interface {
 
 type UseCase interface {
 	CreateReceiver(request dtos.CreateReceiverRequest) (*entity.Receiver, error)
-	SearchReceivers(query string) ([]dtos.GetReceiverResponse, error)
+	SearchReceivers(request dtos.SearchRequest) ([]dtos.GetReceiverResponse, error)
 	UpdateReceiver(req dtos.UpdateReceiverRequest) error
 	ListReceivers(page int) ([]dtos.ListReceiversResponse, error)
 	GetReceiver(id string) (*dtos.GetReceiverResponse, error)
-	//DeleteReceivers()
+	DeleteReceivers(ids dtos.DeleReceiverRequest) error
 }

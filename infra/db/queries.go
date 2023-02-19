@@ -12,10 +12,12 @@ const (
 			             when 1 then 'active' END AS status 
 				 FROM receiver r
 					      LEFT JOIN pix_key_type pkt on r.pixKeyType = pkt.id
-				 WHERE r.name = $1
-				 OR r.document = $1
-				 OR r.email = $1
-				 OR pkt.name = $1`
+				 WHERE r.name LIKE $1
+				 OR r.document LIKE $1
+				 OR r.email LIKE $1
+				 OR pkt.name LIKE $1
+				 ORDER BY r.id
+			     LIMIT $2;`
 
 	QueryUserByID = `SELECT r.id,
 			         r.name,

@@ -15,6 +15,7 @@ type ReceiverHandler interface {
 	Update() fiber.Handler
 	List() fiber.Handler
 	Get() fiber.Handler
+	Search() fiber.Handler
 	Delete() fiber.Handler
 }
 
@@ -88,8 +89,16 @@ func (r *receiverHandler) Update() fiber.Handler {
 
 func (r *receiverHandler) List() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		page := c.QueryInt("page", 1)
-		receivers, err := r.recvService.ListReceivers(page)
+		param := struct {
+			Page uint
+		}{}
+		if err := c.QueryParser(&param); err != nil {
+			return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+				"status": true,
+				"error":  fmt.Sprintf("invalid param for pages, it should be an integer"),
+			})
+		}
+		receivers, err := r.recvService.ListReceivers(int(param.Page))
 		if err != nil {
 			return err
 		}
@@ -131,9 +140,39 @@ func (r *receiverHandler) Get() fiber.Handler {
 	}
 }
 
+func (r *receiverHandler) Search() fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		params := dtos.SearchRequest{}
+		if err := c.QueryParser(&params); err != nil {
+			return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+				"status": false,
+				"error":  "invalid query params",
+			})
+		}
+		if err := utils.ValidateStruct(params); err != nil {
+			return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+				"status": false,
+				"error":  "query param required",
+			})
+		}
+		//success case
+		recv, err := r.recvService.SearchReceivers(params)
+		if err != nil {
+			return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+				"status": false,
+				"error":  "receivers not found",
+			})
+		}
+		return c.Status(http.StatusOK).JSON(fiber.Map{
+			"status":    true,
+			"receivers": recv,
+		})
+	}
+}
+
 func (r *receiverHandler) Delete() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		req := dtos.DeleReceiverRequester{}
+		req := dtos.DeleReceiverRequest{}
 		err := c.BodyParser(&req)
 		if err != nil {
 			return c.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -144,12 +183,15 @@ func (r *receiverHandler) Delete() fiber.Handler {
 		if err := utils.ValidateStruct(req); err != nil {
 			return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 				"status": false,
-				"errors": fmt.Sprintf("invalid data request: %s", err),
+				"errors": "ids field is required, and it needs to be an array",
 			})
 		}
-		return c.Status(http.StatusOK).JSON(fiber.Map{
-			"status":    true,
-			"receivers": req,
-		})
+		if err := r.recvService.DeleteReceivers(req); err != nil {
+			return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+				"status": false,
+				"errors": fmt.Sprintf("an err has happened while deliting the following items %v", req.Ids),
+			})
+		}
+		return c.SendStatus(http.StatusNoContent)
 	}
 }

@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/lucasszmt/transfeera-challenge/domain/receiver"
 	"os"
 )
@@ -17,6 +18,7 @@ func NewServer(receiverService receiver.UseCase) *Server {
 		app:             fiber.New(),
 		receiverService: receiverService,
 	}
+	server.app.Use(logger.New())
 	server.router()
 	return server
 }

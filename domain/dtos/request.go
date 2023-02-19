@@ -13,7 +13,7 @@ type CreateReceiverRequest struct {
 	PixKey     string        `json:"pix_key,omitempty" validate:"required,max=140"`
 }
 
-type DeleReceiverRequester struct {
+type DeleReceiverRequest struct {
 	Ids []uuid.UUID `json:"ids" validate:"required"`
 }
 
@@ -25,4 +25,9 @@ type UpdateReceiverRequest struct {
 	PixKeyType vo.PixKeyType `json:"pix_key_type,omitempty" validate:"required"`
 	PixKey     string        `json:"pix_key,omitempty" validate:"required,max=140"`
 	Status     string        `json:"status" validate:"required"`
+}
+
+type SearchRequest struct {
+	Query string `params:"query" validate:"required"`
+	Limit int
 }

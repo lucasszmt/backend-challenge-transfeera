@@ -51,10 +51,13 @@ func (s *Service) UpdateReceiver(req dtos.UpdateReceiverRequest) error {
 	return s.repo.UpdateValid(id, req.Email)
 }
 
-func (s *Service) SearchReceivers(query string) ([]dtos.GetReceiverResponse, error) {
-	receivers, err := s.repo.Get(query)
+func (s *Service) SearchReceivers(request dtos.SearchRequest) ([]dtos.GetReceiverResponse, error) {
+	if request.Limit <= 0 {
+		request.Limit = 10
+	}
+	receivers, err := s.repo.Get(request.Query, request.Limit)
 	if err != nil {
-		s.log.Error(fmt.Sprintf("error finding the receiver with the following data: %s", query), err)
+		s.log.Error(fmt.Sprintf("error finding the receiver with the following data: %s", request.Query), err)
 		return nil, err
 	}
 	return receivers, nil
@@ -83,6 +86,6 @@ func (s *Service) ListReceivers(page int) ([]dtos.ListReceiversResponse, error) 
 	return list, nil
 }
 
-func (s *Service) DeleteReceivers(req dtos.DeleReceiverRequester) error {
+func (s *Service) DeleteReceivers(req dtos.DeleReceiverRequest) error {
 	return s.repo.Delete(req.Ids...)
 }
