@@ -32,13 +32,16 @@ func (s *Service) CreateReceiver(r dtos.CreateReceiverRequest) (*entity.Receiver
 }
 
 func (s *Service) UpdateReceiver(req dtos.UpdateReceiverRequest) error {
-	rcvr, err := entity.NewUpdatebleReceiver(
-		req.Id, req.Name, req.Email, req.Doc, req.PixKeyType, req.PixKey, req.Status)
-	if err != nil {
-		return err
-	}
-	if rcvr.Status() == entity.Draft {
-		_, err := s.repo.UpdateDraft(rcvr)
+	if req.Status == "draft" {
+		rcvr, err := entity.NewUpdatebleReceiver(
+			req.Id, req.Name, req.Email, req.Doc, req.PixKeyType, req.PixKey, req.Status)
+		//TODO make repo verification  if user is indeed draft or active
+		if err != nil {
+			s.log.Error("invalid user information provided for update", err)
+			return err
+		}
+
+		_, err = s.repo.UpdateDraft(rcvr)
 		if err != nil {
 			return err
 		}
@@ -55,9 +58,12 @@ func (s *Service) SearchReceivers(request dtos.SearchRequest) ([]dtos.GetReceive
 	if request.Limit <= 0 {
 		request.Limit = 10
 	}
+	if request.Limit > 100 {
+		request.Limit = 100
+	}
 	receivers, err := s.repo.Get(request.Query, request.Limit)
 	if err != nil {
-		s.log.Error(fmt.Sprintf("error finding the receiver with the following data: %s", request.Query), err)
+		s.log.Error(fmt.Sprintf("error finding the receiver with the following query: %s", request.Query), err)
 		return nil, err
 	}
 	return receivers, nil

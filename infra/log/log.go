@@ -20,8 +20,10 @@ func PrettyLogger() logger {
 }
 
 func NewLogger(level zerolog.Level) logger {
+	l := zerolog.Logger{}
+	l.WithLevel(level)
 	return logger{
-		zerolog.Logger{},
+		l,
 	}
 }
 
@@ -30,7 +32,7 @@ type logger struct {
 }
 
 func (l *logger) Info(msg string) {
-	l.logger.Info().Msg("asdasd")
+	l.logger.Info().Msg(msg)
 }
 
 func (l *logger) Error(msg string, err error) {
@@ -45,4 +47,23 @@ func (l *logger) Fatal(msg string, err error) {
 	l.logger.Fatal().
 		Err(err).
 		Msg(msg)
+}
+
+type MockLogger struct {
+}
+
+func (m MockLogger) Info(msg string) {
+	//TODO implement me
+}
+
+func (m MockLogger) Error(msg string, err error) {
+	//TODO implement me
+}
+
+func (m MockLogger) Warn(msg string) {
+	//TODO implement me
+}
+
+func (m MockLogger) Fatal(msg string, err error) {
+	//TODO implement me
 }

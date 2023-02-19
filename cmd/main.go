@@ -6,7 +6,6 @@ import (
 	"github.com/lucasszmt/transfeera-challenge/domain/receiver"
 	"github.com/lucasszmt/transfeera-challenge/infra/db"
 	"github.com/lucasszmt/transfeera-challenge/infra/log"
-	"github.com/rs/zerolog"
 	"os"
 )
 
@@ -16,7 +15,8 @@ func main() {
 		panic("Error loading .env file")
 	}
 
-	logger := log.NewLogger(zerolog.DebugLevel)
+	//logger := log.NewLogger(zerolog.InfoLevel)
+	logger := log.PrettyLogger()
 
 	// Init DB connection
 	dbConn := db.Must(db.NewPostgresConn(
