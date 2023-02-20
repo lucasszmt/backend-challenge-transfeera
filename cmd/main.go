@@ -10,13 +10,11 @@ import (
 )
 
 func main() {
+	logger := log.PrettyLogger()
 	err := godotenv.Load()
 	if err != nil {
-		panic("Error loading .env file")
+		logger.Info("env file not found")
 	}
-
-	//logger := log.NewLogger(zerolog.InfoLevel)
-	logger := log.PrettyLogger()
 
 	// Init DB connection
 	dbConn := db.Must(db.NewPostgresConn(
