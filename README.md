@@ -10,7 +10,7 @@ $ make init
 Isso fará com que subam containers tanto para o banco quanto para o microserviço, bem como rodará 
 as migrações iniciais para criação de tabelas e preenchimento de dados
 
-
+E para rodar os testes basta apenas rodar o comando `make coverage_tests`
 ## Endpoints
 ### Criação de recebedores(receivers)
 Deverá ser feita uma requisição do tipo POST para o endpoint `localhost:8000/api/v1/receiver` com o body contendo
